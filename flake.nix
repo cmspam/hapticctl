@@ -9,7 +9,7 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = nixpkgs.legacyPackages.${stdenv.hostPlatform.system};
         hapticctl = pkgs.python3Packages.buildPythonApplication {
           pname = "hapticctl";
           version = "0.1.0";
