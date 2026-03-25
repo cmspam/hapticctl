@@ -71,7 +71,7 @@
             environment.systemPackages = [ hapticctl ];
 
             services.udev.extraRules = lib.mkIf cfg.udevRules ''
-              KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{bInterfaceClass}=="03", GROUP="input", MODE="0660"
+              SUBSYSTEM=="hidraw", KERNEL=="hidraw*", DRIVERS=="hid-multitouch", MODE="0660", GROUP="input", TAG+="uaccess"
             '';
 
             systemd.services.hapticctl-restore = {
