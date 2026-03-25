@@ -14,8 +14,8 @@
           pname = "hapticctl";
           version = "0.1.0";
           src = ./.;
-          format = "pyproject";
-          nativeBuildInputs = [ pkgs.python3Packages.setuptools ];
+          format = "setuptools";
+          nativeBuildInputs = [ setuptools wheel ];
           meta = with pkgs.lib; {
             description = "Control haptic touchpad feedback intensity on Linux via HID";
             homepage = "https://github.com/cmspam/hapticctl";
