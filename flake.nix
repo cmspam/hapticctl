@@ -9,7 +9,7 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${stdenv.hostPlatform.system};
+        pkgs = nixpkgs.legacyPackages.${system};
         hapticctl = pkgs.python3Packages.buildPythonApplication {
           pname = "hapticctl";
           version = "0.1.0";
@@ -41,7 +41,7 @@
       nixosModules.default = { config, lib, pkgs, ... }:
         let
           cfg = config.services.hapticctl;
-          hapticctl = self.packages.${pkgs.system}.hapticctl;
+          hapticctl = self.packages.${pkgs.stdenv.hostPlatform.system}.hapticctl;
         in
         {
           options.services.hapticctl = {
