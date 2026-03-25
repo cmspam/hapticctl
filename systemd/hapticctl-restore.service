@@ -1,0 +1,24 @@
+# hapticctl-restore.service — restore haptic intensity on login
+#
+# Install as a systemd USER service:
+#   mkdir -p ~/.config/systemd/user/
+#   cp hapticctl-restore.service ~/.config/systemd/user/
+#   systemctl --user enable --now hapticctl-restore.service
+#
+# Or install system-wide (runs before login, requires root):
+#   cp hapticctl-restore.service /etc/systemd/system/
+#   systemctl enable --now hapticctl-restore.service
+
+[Unit]
+Description=Restore haptic touchpad intensity
+Documentation=https://github.com/cmspam/hapticctl
+After=systemd-udevd.service
+Wants=systemd-udevd.service
+
+[Service]
+Type=oneshot
+ExecStart=hapticctl restore
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target

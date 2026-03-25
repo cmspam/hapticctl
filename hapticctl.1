@@ -1,0 +1,130 @@
+.TH HAPTICCTL 1 "2025" "hapticctl 0.1.0" "User Commands"
+.SH NAME
+hapticctl \- control haptic touchpad feedback intensity on Linux
+.SH SYNOPSIS
+.B hapticctl
+[\fIOPTIONS\fR] \fICOMMAND\fR [\fIARGS\fR]
+.SH DESCRIPTION
+.B hapticctl
+controls the haptic feedback intensity of precision touchpads that expose
+a HID haptic intensity feature report (Usage Page 0x0E, Usage 0x23), as
+defined in the Microsoft Precision Touchpad specification.
+
+It communicates directly with the device via the kernel
+.I hidraw
+interface, bypassing libinput and any other higher-level input stack.
+
+State is persisted across reboots via a plain text file under
+\fI$XDG_STATE_HOME/hapticctl/intensity\fR (user mode) or
+\fI/var/lib/hapticctl/intensity\fR (system mode).
+.SH COMMANDS
+.TP
+.B get
+Print the current intensity. Attempts a hardware read first; falls back to
+the saved state if the device does not support feature report reads.
+.TP
+.B set \fIVALUE\fR
+Set intensity to \fIVALUE\fR (0\[en]100). Saves the value for future restores.
+.TP
+.B up
+Step up to the next preset level above the current value.
+.TP
+.B down
+Step down to the next preset level below the current value.
+.TP
+.B cycle
+Advance to the next preset level, wrapping from max back to off.
+Useful as a keyboard shortcut action.
+.TP
+.B restore
+Apply the last saved intensity. Intended for use by the systemd service on login.
+.TP
+.B status
+Print a human-readable summary: device path, current intensity, and level name.
+.TP
+.B list-devices
+Scan \fI/dev/hidraw*\fR and list devices that expose a haptic intensity feature.
+.SH OPTIONS
+.TP
+.B \-d, \-\-device \fIPATH\fR
+Use \fIPATH\fR as the hidraw device instead of auto-detecting.
+.TP
+.B \-r, \-\-report-id \fIN\fR
+HID feature report ID for haptic intensity (default: 9).
+.TP
+.B \-\-levels \fILEVELS\fR
+Override the preset level map. Comma-separated \fIname:value\fR pairs,
+e.g. \fIoff:0,low:33,high:66,max:100\fR.
+.TP
+.B \-n, \-\-notify
+Send a desktop notification via
+.BR notify-send (1)
+when the intensity changes. Shows a visual level indicator.
+.TP
+.B \-m, \-\-machine
+Machine-readable output: print only the numeric value, no level name.
+.TP
+.B \-\-system
+Use the system-wide state file \fI/var/lib/hapticctl/intensity\fR.
+Useful when running as root or from a system-level service.
+.TP
+.B \-\-version
+Print version and exit.
+.SH DEFAULT LEVELS
+.TS
+l l.
+off	0
+low	25
+medium	50
+high	75
+max	100
+.TE
+.SH PERMISSIONS
+.B hapticctl
+requires read/write access to \fI/dev/hidrawN\fR. By default this requires root.
+Install the provided udev rule to grant access to members of the \fBinput\fR group:
+.PP
+.RS
+.nf
+sudo cp contrib/70-hapticctl.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules && sudo udevadm trigger
+sudo usermod -aG input $USER
+.fi
+.RE
+.SH EXAMPLES
+.TP
+Set intensity to maximum:
+.B hapticctl set 100
+.TP
+Step up one level with a notification:
+.B hapticctl --notify up
+.TP
+Cycle through levels (assign to a keyboard shortcut):
+.B hapticctl --notify cycle
+.TP
+Print current intensity as a number (for scripts):
+.B hapticctl --machine get
+.TP
+Restore saved intensity at login:
+.B hapticctl restore
+.TP
+List detected haptic devices:
+.B hapticctl list-devices
+.SH FILES
+.TP
+.I $XDG_STATE_HOME/hapticctl/intensity
+Per-user saved intensity (typically \fI~/.local/state/hapticctl/intensity\fR).
+.TP
+.I /var/lib/hapticctl/intensity
+System-wide saved intensity (used with \fB--system\fR or when run as root).
+.TP
+.I /etc/udev/rules.d/70-hapticctl.rules
+udev rule for non-root access.
+.SH SEE ALSO
+.BR brightnessctl (1),
+.BR udevadm (8),
+.BR systemctl (1)
+.SH AUTHORS
+hapticctl was written by cmspam.
+.SH LICENSE
+MIT License. See \fILICENSE\fR in the source distribution.

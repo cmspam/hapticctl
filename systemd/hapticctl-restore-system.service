@@ -1,0 +1,23 @@
+# hapticctl-restore-system.service — restore haptic intensity system-wide at boot
+#
+# This variant runs as root and uses /var/lib/hapticctl/intensity as state.
+# Use this if you prefer boot-time restoration (before any user logs in).
+#
+# Install:
+#   cp hapticctl-restore-system.service /etc/systemd/system/
+#   systemctl enable --now hapticctl-restore-system.service
+
+[Unit]
+Description=Restore haptic touchpad intensity (system)
+Documentation=https://github.com/cmspam/hapticctl
+After=systemd-udevd.service
+Wants=systemd-udevd.service
+
+[Service]
+Type=oneshot
+ExecStart=hapticctl --system restore
+RemainAfterExit=yes
+User=root
+
+[Install]
+WantedBy=multi-user.target
