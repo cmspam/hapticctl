@@ -9,7 +9,7 @@ description = "Control haptic touchpad feedback intensity on Linux via HID"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [
-    { name = "cmspam", email = "" }
+    { name = "cmspam", email = "cmspam@cmspam.no" }
 ]
 keywords = ["haptic", "touchpad", "hid", "linux", "input"]
 classifiers = [
