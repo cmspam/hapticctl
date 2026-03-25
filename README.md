@@ -192,30 +192,6 @@ Use `hapticctl --system set VALUE` when using the system service, so it reads an
 }
 ```
 
-## Home Manager module
-
-```nix
-{
-  inputs.hapticctl.url = "github:cmspam/hapticctl";
-
-  outputs = { home-manager, hapticctl, ... }: {
-    homeConfigurations."user@host" = home-manager.lib.homeManagerConfiguration {
-      modules = [
-        hapticctl.homeManagerModules.default
-        {
-          services.hapticctl = {
-            enable = true;
-            defaultIntensity = 75;
-          };
-        }
-      ];
-    };
-  };
-}
-```
-
----
-
 ## How it works
 
 Haptic touchpads implement the [HID Haptics](https://usb.org/sites/default/files/hut1_5.pdf) usage page (0x0E). Specifically, they expose a Feature Report containing Usage 0x23 (Intensity), accepting values 0–100.
